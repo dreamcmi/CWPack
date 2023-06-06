@@ -21,7 +21,6 @@
  */
 
 #include <string.h>
-#include <math.h>
 
 #include "cwpack.h"
 #include "cwpack_internals.h"
@@ -50,7 +49,7 @@ static void	*memcpy(void *dst, const void *src, size_t n)
 /*************************   B Y T E   O R D E R   ****************************/
 
 
-static int test_byte_order(void)
+static int8_t test_byte_order(void)
 {
 #ifdef COMPILE_FOR_BIG_ENDIAN
     const char *endianness = "1234";
@@ -72,7 +71,7 @@ static int test_byte_order(void)
 
 
 
-int cw_pack_context_init (cw_pack_context* pack_context, void* data, unsigned long length, pack_overflow_handler hpo)
+int32_t cw_pack_context_init (cw_pack_context* pack_context, void* data, uint32_t length, pack_overflow_handler hpo)
 {
     pack_context->start = pack_context->current = (uint8_t*)data;
     pack_context->end = pack_context->start + length;
@@ -277,7 +276,6 @@ void cw_pack_str(cw_pack_context* pack_context, const char* v, uint32_t l)
     *p++ = (uint8_t)0xdb;
     cw_store32(l);
     memcpy(p+4,v,l);
-    return;
 }
 
 
@@ -315,7 +313,6 @@ void cw_pack_bin(cw_pack_context* pack_context, const void* v, uint32_t l)
     *p++ = (uint8_t)0xc6;
     cw_store32(l);
     memcpy(p+4,v,l);
-    return;
 }
 
 
@@ -447,7 +444,7 @@ void cw_pack_flush (cw_pack_context* pack_context)
 /*******************************   U N P A C K   **********************************/
 
 
-int cw_unpack_context_init (cw_unpack_context* unpack_context, const void* data, unsigned long length, unpack_underflow_handler huu)
+int32_t cw_unpack_context_init (cw_unpack_context* unpack_context, const void* data, uint32_t length, unpack_underflow_handler huu)
 {
     unpack_context->start = unpack_context->current = (uint8_t*)data;
     unpack_context->end = unpack_context->start + length;
@@ -597,7 +594,7 @@ void cw_unpack_next (cw_unpack_context* unpack_context)
     cw_unpack_assert_space((n));                          \
     break;
 
-void cw_skip_items (cw_unpack_context* unpack_context, long item_count)
+void cw_skip_items (cw_unpack_context* unpack_context, uint32_t item_count)
 {
     if (unpack_context->return_code)
         return;
