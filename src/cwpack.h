@@ -4,51 +4,54 @@
 
  Copyright (c) 2017 Claes Wihlborg
 
- Permission is hereby granted, free of charge, to any person obtaining a copy of this
- software and associated documentation files (the "Software"), to deal in the Software
- without restriction, including without limitation the rights to use, copy, modify,
- merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
- persons to whom the Software is furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy of
+ this software and associated documentation files (the "Software"), to deal in
+ the Software without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ of the Software, and to permit persons to whom the Software is furnished to do
+ so, subject to the following conditions:
 
- The above copyright notice and this permission notice shall be included in all copies or
- substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
+
+/*
+ * 2023.06.06 Darren use the stdint type to indicate the parameter type
+ * 2023.06.06 Darren Clang-format
  */
 
 #ifndef CWPack_H__
 #define CWPack_H__
 
-
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <time.h>
-
-
 
 /*******************************   Return Codes   *****************************/
 
-#define CWP_RC_OK                        (0)
-#define CWP_RC_END_OF_INPUT              (-1)
-#define CWP_RC_BUFFER_OVERFLOW           (-2)
-#define CWP_RC_BUFFER_UNDERFLOW          (-3)
-#define CWP_RC_MALFORMED_INPUT           (-4)
-#define CWP_RC_WRONG_BYTE_ORDER          (-5)
-#define CWP_RC_ERROR_IN_HANDLER          (-6)
-#define CWP_RC_ILLEGAL_CALL              (-7)
-#define CWP_RC_MALLOC_ERROR              (-8)
-#define CWP_RC_STOPPED                   (-9)
-#define CWP_RC_TYPE_ERROR                (-10)
-#define CWP_RC_VALUE_ERROR               (-11)
-#define CWP_RC_WRONG_TIMESTAMP_LENGTH    (-12)
-
+#define CWP_RC_OK (0)
+#define CWP_RC_END_OF_INPUT (-1)
+#define CWP_RC_BUFFER_OVERFLOW (-2)
+#define CWP_RC_BUFFER_UNDERFLOW (-3)
+#define CWP_RC_MALFORMED_INPUT (-4)
+#define CWP_RC_WRONG_BYTE_ORDER (-5)
+#define CWP_RC_ERROR_IN_HANDLER (-6)
+#define CWP_RC_ILLEGAL_CALL (-7)
+#define CWP_RC_MALLOC_ERROR (-8)
+#define CWP_RC_STOPPED (-9)
+#define CWP_RC_TYPE_ERROR (-10)
+#define CWP_RC_VALUE_ERROR (-11)
+#define CWP_RC_WRONG_TIMESTAMP_LENGTH (-12)
 
 /*******************************   P A C K   **********************************/
-
 
 struct cw_pack_context;
 
@@ -62,17 +65,19 @@ typedef struct cw_pack_context {
     uint8_t *end;
     bool be_compatible;
     int8_t return_code;
-    int8_t err_no;          /* handlers can save error here */
+    int8_t err_no; /* handlers can save error here */
     pack_overflow_handler handle_pack_overflow;
     pack_flush_handler handle_flush;
 } cw_pack_context;
 
+int32_t cw_pack_context_init(cw_pack_context *pack_context, void *data,
+                             uint32_t length, pack_overflow_handler hpo);
 
-int32_t cw_pack_context_init(cw_pack_context *pack_context, void *data, uint32_t length, pack_overflow_handler hpo);
+void cw_pack_set_compatibility(cw_pack_context *pack_context,
+                               bool be_compatible);
 
-void cw_pack_set_compatibility(cw_pack_context *pack_context, bool be_compatible);
-
-void cw_pack_set_flush_handler(cw_pack_context *pack_context, pack_flush_handler handle_flush);
+void cw_pack_set_flush_handler(cw_pack_context *pack_context,
+                               pack_flush_handler handle_flush);
 
 void cw_pack_flush(cw_pack_context *pack_context);
 
@@ -92,7 +97,8 @@ void cw_pack_float(cw_pack_context *pack_context, float f);
 
 void cw_pack_double(cw_pack_context *pack_context, double d);
 
-/* void cw_pack_real (cw_pack_context* pack_context, double d);   moved to cwpack_utils */
+/* void cw_pack_real (cw_pack_context* pack_context, double d);   moved to
+ * cwpack_utils */
 
 void cw_pack_array_size(cw_pack_context *pack_context, uint32_t n);
 
@@ -102,15 +108,14 @@ void cw_pack_str(cw_pack_context *pack_context, const char *v, uint32_t l);
 
 void cw_pack_bin(cw_pack_context *pack_context, const void *v, uint32_t l);
 
-void cw_pack_ext(cw_pack_context *pack_context, int8_t type, const void *v, uint32_t l);
+void cw_pack_ext(cw_pack_context *pack_context, int8_t type, const void *v,
+                 uint32_t l);
 
 void cw_pack_time(cw_pack_context *pack_context, int64_t sec, uint32_t nsec);
 
 void cw_pack_insert(cw_pack_context *pack_context, const void *v, uint32_t l);
 
-
 /*****************************   U N P A C K   ********************************/
-
 
 typedef enum {
     CWP_ITEM_MIN_RESERVED_EXT = -128,
@@ -261,23 +266,19 @@ typedef enum {
     CWP_NOT_AN_ITEM = 999
 } cwpack_item_types;
 
-
 typedef struct {
     const void *start;
     uint32_t length;
 } cwpack_blob;
 
-
 typedef struct {
     uint32_t size;
 } cwpack_container;
-
 
 typedef struct {
     int64_t tv_sec;
     uint32_t tv_nsec;
 } cwpack_timespec;
-
 
 typedef struct {
     cwpack_item_types type;
@@ -298,20 +299,21 @@ typedef struct {
 
 struct cw_unpack_context;
 
-typedef int32_t (*unpack_underflow_handler)(struct cw_unpack_context *, unsigned long);
+typedef int32_t (*unpack_underflow_handler)(struct cw_unpack_context *,
+                                            unsigned long);
 
 typedef struct cw_unpack_context {
     cwpack_item item;
     uint8_t *start;
     uint8_t *current;
-    uint8_t *end;             /* logical end of buffer */
+    uint8_t *end; /* logical end of buffer */
     int8_t return_code;
-    int8_t err_no;          /* handlers can save error here */
+    int8_t err_no; /* handlers can save error here */
     unpack_underflow_handler handle_unpack_underflow;
 } cw_unpack_context;
 
-
-int32_t cw_unpack_context_init(cw_unpack_context *unpack_context, const void *data, uint32_t length,
+int32_t cw_unpack_context_init(cw_unpack_context *unpack_context,
+                               const void *data, uint32_t length,
                                unpack_underflow_handler huu);
 
 void cw_unpack_next(cw_unpack_context *unpack_context);
@@ -320,5 +322,4 @@ void cw_skip_items(cw_unpack_context *unpack_context, uint32_t item_count);
 
 cwpack_item_types cw_look_ahead(cw_unpack_context *unpack_context);
 
-
-#endif  /* CWPack_H__ */
+#endif /* CWPack_H__ */
