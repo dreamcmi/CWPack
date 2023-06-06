@@ -52,9 +52,9 @@
 
 struct cw_pack_context;
 
-typedef int32_t (*pack_overflow_handler)(struct cw_pack_context *, uint32_t);
+typedef int8_t (*pack_overflow_handler)(struct cw_pack_context *, uint32_t);
 
-typedef int32_t (*pack_flush_handler)(struct cw_pack_context *);
+typedef int8_t (*pack_flush_handler)(struct cw_pack_context *);
 
 typedef struct cw_pack_context {
     uint8_t *current;
